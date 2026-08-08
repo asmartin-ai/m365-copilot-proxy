@@ -101,8 +101,10 @@ From the debug log at `~/.config/opencode-m365/debug.log` (with
 - `Intent verifier authorized execution of N tool call(s)` → EXECUTE path
   completed.
 - `cache=hit|shared` on a repeated tool-shaped turn within the same thread.
-- `intent-verifier drift: responseHash changed` only when the planner text
-  actually changed — `log.info` from the verifier, never from the corpus.
+- `intent-verifier drift: responseHash changed` fires when the planner
+  text under the same prefix key changed between requests; it treats the
+  cached result as stale and re-verifies. Only logged when that happens —
+  its absence on repeat turns is the cache-hit signal.
 
 ### 6. Fail-closed drill
 
