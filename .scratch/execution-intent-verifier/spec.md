@@ -26,8 +26,9 @@ Frozen constraints (do not drift):
 - Implemented: `packages/proxy-lib/src/intent-verifier.ts`
   (`getIntentVerifier()` / `resetIntentVerifier()`), wired in `tool-path.ts`,
   injected from `handler.ts`.
-- Opt-in: `M365_INTENT_VERIFIER=1` (or endpoint override); default OFF keeps
-  existing deployments byte-identical.
+- Default-on: verifier active by default; explicit `M365_INTENT_VERIFIER=0`
+  opts out (wins over endpoint/model overrides); `=1`/endpoint remain explicit
+  activations. (ticket 02)
 - 10A latency readiness (dev-only, Bonsai km42 EM): cold median 24.6 s / p95
   42.1 s; cache-hit 0 ms (byte-identical); single-flight dedup verified;
   fail-closed verified on timeout/error/invalid/UNCERTAIN.
@@ -39,6 +40,6 @@ Frozen constraints (do not drift):
 | # | Ticket | Status |
 |---|--------|--------|
 | 01 | Live validation (laptop, real M365) | `ready-for-human` |
-| 02 | Flip default-on after live parity | `ready-for-agent`, blocked by 01 |
+| 02 | Flip default-on after live parity | `resolved` |
 | 03 | Held-out evaluation (32 cases) | `needs-info`, blocked by 02 |
 | 04 | Latency engineering (the open alternative) | `ready-for-agent`, blocked by 01 |

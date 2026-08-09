@@ -1,9 +1,12 @@
 # 02 — Flip the verifier default-on
 
-**Status:** ready-for-agent
+**Status:** resolved
 **Category:** enhancement
 **Type:** task
 **Blocked by:** 01
+**Resolution:** implemented 2026-08-08 (default-on with `M365_INTENT_VERIFIER=0`
+opt-out; ADR-0002 updated; enacted on architect approval after ticket-01 live
+validation cleared the fail-closed/EXECUTE/TEXT paths).
 
 ## Goal
 
