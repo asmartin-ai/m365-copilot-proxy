@@ -1,6 +1,6 @@
 # 03 — Held-out evaluation (32 cases)
 
-**Status:** needs-info
+**Status:** ready-for-agent — merged default-on verifier path is stable (551e02f: EOL-portable frozen prompt; intent-verifier tests 19/19, proxy-lib typecheck clean)
 **Category:** enhancement
 **Type:** task
 **Blocked by:** 02
