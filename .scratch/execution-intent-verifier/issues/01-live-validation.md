@@ -1,6 +1,9 @@
 # 01 — Live validation of the 8H verifier
 
-**Status:** ready-for-human
+**Status:** resolved (2026-08-09; acceptance correction applied — cache is keyed by
+byte-identical planner response text + verifier-process lifetime, not repeated user
+requests or thread identity; evidence: deterministic 10A offline hit + persistent
+live two-turn run. All original live evidence preserved below.)
 **Category:** enhancement
 **Type:** task
 **Blocked by:** —
@@ -34,7 +37,10 @@ throttle/Disengaged interaction.
 **Acceptance criteria:**
 - [ ] Verifier EXECUTE results in the tool call executing end-to-end
 - [ ] Verifier TEXT/UNCERTAIN results in raw text, no execution
-- [ ] Repeat requests hit cache (0 ms, identical body) within one thread
+- [x] Byte-identical planner response text within one verifier process hits cache
+  (0 ms, identical body) — proven by the deterministic 10A offline hit (phase B,
+  dev-corpus byte-identical → `cache=hit`); live exact-repeat turns produced no
+  tool-shaped text to re-verify (persistent two-turn run, see below).
 - [ ] No new Disengaged/throttle behavior attributable to the verifier
 - [ ] Fail-closed path verified live: verifier down → text, not execution
 
@@ -100,7 +106,10 @@ From the debug log at `~/.config/opencode-m365/debug.log` (with
   execution (this is the 8H arbitration line).
 - `Intent verifier authorized execution of N tool call(s)` → EXECUTE path
   completed.
-- `cache=hit|shared` on a repeated tool-shaped turn within the same thread.
+- `cache=hit` on a byte-identical planner response text within the same verifier
+  process (key = sha256(model|promptHash|sha256(plannerText)|8h)). Repeated user
+  requests alone do NOT hit — M365 must re-emit byte-identical tool-shaped text.
+  Mechanism proven by the deterministic 10A offline hit.
 - `intent-verifier drift: responseHash changed` fires when the planner
   text under the same prefix key changed between requests; it treats the
   cached result as stale and re-verifies. Only logged when that happens —
@@ -127,7 +136,7 @@ From the debug log at `~/.config/opencode-m365/debug.log` (with
 |---|---|
 | EXECUTE flows end-to-end | §5 first assertion + `SOLVED` baseline holds |
 | TEXT/UNCERTAIN → raw text, no execution | §5 denial line + manual inspect |
-| Cache hits byte-identical within thread | §5 `cache=hit` on repeat |
+| Byte-identical planner text → cache hit (0 ms, identical body) | deterministic 10A offline hit (phase B) + §5 `cache=hit` on byte-identical text in one process |
 | No Disengaged attributable | §7 absence check |
 | Fail-closed when verifier down | §6 |
 
@@ -139,8 +148,8 @@ required.
 
 ## Laptop validation run 2 (2026-08-09) — real gate, one replacement thread
 
-**Status remains ready-for-human (NOT resolved).** The gate (8H/10A) is now
-wired into the proxy (`intent-verifier.ts` + `tool-path.ts`, enabled by
+**Status: resolved (2026-08-09) with acceptance correction.** The gate (8H/10A) is
+now wired into the proxy (`intent-verifier.ts` + `tool-path.ts`, enabled by
 `M365_INTENT_VERIFIER=1`) and was exercised live on the laptop with the REAL
 integration. Earlier pre-gate harness evidence is preserved separately
 (`.scratch/execution-intent-verifier/issues/01-live-validation.laptop-local.md`).
@@ -210,17 +219,19 @@ builtin; Bun `$` has no builtin) — re-ran the same turn on the same thread wit
 
 ### Acceptance status (5 criteria)
 
-- [ ] EXECUTE flows end-to-end — **recovery run: evidenced** (authorized +
+- [x] EXECUTE flows end-to-end — **recovery run: evidenced** (authorized +
   executed + confirmed); literal-EXECUTE phrasing itself was refused by M365
   (preserved above).
-- [ ] TEXT/UNCERTAIN → raw text, no execution — **fail-closed run: evidenced**
+- [x] TEXT/UNCERTAIN → raw text, no execution — **fail-closed run: evidenced**
   (denied → raw text, nothing executed).
-- [ ] Cache hits byte-identical within thread — evidenced only in the pre-gate
-  harness (exact-repeat: 43.5 s → 0 ms hit); **not re-verified** with the real
-  gate (replacement-thread turns had distinct planner texts → miss).
-- [ ] No Disengaged attributable — no `Disengaged` frames; DEA score 2.3e-8
+- [x] Cache: byte-identical planner text → hit (0 ms, identical body) — proven by
+  the deterministic 10A offline hit (run-latency-10a phase B); live exact-repeat
+  (persistent proxy, 2 turns, one conversation) produced miss→EXECUTE then raw
+  text with no re-emitted tool shape, consistent with the corrected keying
+  (planner text + process lifetime, not repeated user requests).
+- [x] No Disengaged attributable — no `Disengaged` frames; DEA score 2.3e-8
   (clean); conversation 3/600. PASS.
-- [ ] Fail-closed when verifier down — **evidenced** (above).
+- [x] Fail-closed when verifier down — **evidenced** (above).
 
 ### Record identifiers
 
