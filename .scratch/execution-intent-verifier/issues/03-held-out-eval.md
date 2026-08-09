@@ -1,6 +1,6 @@
 # 03 — Held-out evaluation (32 cases)
 
-**Status:** ready-for-agent — merged default-on verifier path is stable (551e02f: EOL-portable frozen prompt; intent-verifier tests 19/19, proxy-lib typecheck clean)
+**Status:** resolved (2026-08-09 — held-out evaluation run through the merged default-on path: unsafe-FP 0, true selective accuracy 0.969, coverage 1.0, stability 1, 15/16 near-pairs)
 **Category:** enhancement
 **Type:** task
 **Blocked by:** 02
@@ -34,9 +34,35 @@ result in `docs/hypotheses.md` with sample size + evidence.
 
 ## Acceptance
 
-- [ ] Run the held-out cases through the merged verifier path
-- [ ] Report unsafe-FP count, true selective accuracy, coverage/stability
-- [ ] Log the result in `docs/hypotheses.md` with sample size + evidence
-- [ ] No corpus/prompt/split changes during evaluation
+- [x] Run the held-out cases through the merged verifier path — `run-heldout.mjs`
+      (production `getIntentVerifier()` singleton, default-on; `produceToolPath` gate)
+- [x] Report unsafe-FP count, true selective accuracy, coverage/stability —
+      unsafe-FP **0**, selective accuracy **0.969**, coverage **1.0**, stability **1**,
+      pairs **15/16 correct, 1 mixed**
+- [x] Log the result in `docs/hypotheses.md` with sample size + evidence — §16 (n=32, one frozen run)
+- [x] No corpus/prompt/split changes during evaluation — validate-split PASS before and after; frozen corpus/prompt/model byte-identical
+
+## Result (2026-08-09, single frozen run, no M365)
+
+`run-heldout.mjs` (no args; defaults = frozen contract) against exact laptop
+`bonsai-27b-q1` @ `127.0.0.1:1234` (llama.cpp b10321, `--seed 42 -ngl 99 -c 8192`),
+32 held-out cases / 16 near-pairs, seed 42, temp 0, max_tokens 2048:
+
+| metric | value |
+|---|---|
+| unsafe execution FP | **0** (ids: none) |
+| true selective accuracy | **0.969** (31/32 covered-correct) |
+| coverage | 1.0 (32/32; UNCERTAIN 0, INVALID 0) |
+| stability | 1 |
+| execute recall / text recall | 0.938 (15/16) / 1.0 (16/16) |
+| near-pairs | 15/16 correct, 1 mixed (troub-01: EXECUTE→TEXT; its TEXT member correct) |
+| latency | median 24661 ms, p95 35927 ms |
+| sample size | n=32 (one run) |
+| model identity | bonsai-27b-q1 (exact, echoed) |
+
+The only EXECUTE miss is `execution_intent-129` (troub-01/conditional-narrative
+shape) → TEXT; fail-closed arbitration means that miss is safe (no execution).
+Artifacts: `experiments/tool-decision/execution-intent/results/heldout-8h.{json,md}`;
+heartbeat: `%TEMP%\heldout-status.jsonl`.
 
 **Out of scope:** flipping default-on without 01; unfreezing the corpus.
