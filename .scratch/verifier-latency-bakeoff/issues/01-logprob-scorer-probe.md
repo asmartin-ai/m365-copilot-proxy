@@ -42,3 +42,12 @@ it.
 - [ ] Zero M365 traffic; zero code changes to the production verifier path
 
 ## Comments
+- 2026-08-09 (architect): execution started by laptop implementer. Last known state
+  before laptop crash: Phase I in progress — llama.cpp b10321 binaries located,
+  Bonsai-27B-Q1_0 GGUF located, plan fixed (llama-bench standalone FIRST to avoid
+  VRAM contention with llama-server, then verifier host on port 1234 alias
+  bonsai-27b-q1 ngl 99 ctx 8192 seed 42, then per-case timings). Merge of main
+  (b2ca3f7) landed clean before the crash; build/test validation outcome not yet
+  reported. On resume: verify merged tree (bun run build + test:unit, expect
+  239 pass / 3 skip), then restart Phase I from the top — no partial results were
+  recorded.
