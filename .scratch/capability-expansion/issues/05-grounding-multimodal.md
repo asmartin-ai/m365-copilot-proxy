@@ -27,3 +27,16 @@ Four separate levers, each a cheap canary:
 
 **Out of scope:** uploading a company file without user explicit consent;
 changing the default `optionsSets` payload while probes are in flight.
+
+## Comments
+
+- **2026-08-08** — Investigated the stale `image-upload` git worktree/branch
+  (`.git/worktrees/m365-copilot-proxy-image-upload`, branch `image-upload` at
+  `ce4b14b`). Finding: the working tree is deleted (hollow metadata — no
+  `gitdir`, no `logs/HEAD`), and the branch is **fully merged into `main`** (0
+  unique commits; `git merge-base main image-upload` = `ce4b14b`, the branch
+  head itself). No orphaned work exists. The "image upload" feature intent is
+  **this ticket's H8.10** (substrate `UploadFile` → `docId` → `ImageFile`
+  message annotation) plus `02-image-canary.md` for image *generation*
+  (H8.3 `GraphicArt`/flux). No duplicate ticket created. The dead branch is
+  safe to clean up (`git branch -d image-upload` + `git worktree prune`).
