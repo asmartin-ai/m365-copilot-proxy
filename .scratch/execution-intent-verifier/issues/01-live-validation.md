@@ -286,6 +286,36 @@ Controls all match gold TEXT (text_recall 3/3 on these). Results file (temp):
   mechanism offline-proven (10A), live observation not reproducible. No M365
   request sent.
 
+### Live cache validation (2026-08-09) — persistent proxy, exactly 2 turns
+
+**Setup.** ONE persistent Nitro proxy (`m365-proxy`, port 4141,
+`M365_INTENT_VERIFIER=1`, frozen verifier defaults) + local `bonsai-27b-q1`
+(frozen spec, pid 5572). ONE new managed conversation
+`live-cache-2026-08-09-08-20-30`; exactly TWO sequential turns with the
+verbatim-same request: *"Please run the shell command `echo CACHE_PROBE_20260809`
+now and show me its output."*
+
+- **Turn 1** (36.6 s): M365 emitted `bash echo CACHE_PROBE_20260809`;
+  verifier record (debug log 4414):
+  `model=bonsai-27b-q1 policyVersion=8h promptHash=04d91374…`
+  `responseHash=8add771a2301ac8b6b1323cefff24e9ecc59094d264509a86244c28315670cfc`
+  `cache=miss decision=EXECUTE latencyMs=32551 error=null reasoningChars=3612`;
+  `Intent verifier authorized execution of 1 tool call(s)` (4415–4416); tool call
+  executed → output `CACHE_PROBE_20260809`.
+- **Turn 2** (4.5 s): M365 returned **raw text** (*"Output: `CACHE_PROBE_20260809`"*)
+  — no tool-shaped response → **no verifier call → no cache record**.
+  **cache=hit NOT observed**: the repeat did not produce a tool-shaped planner
+  text, so the gate was not exercised on turn 2.
+- **Signals:** conversation 1→2/600; DEA 1.06e-7; message_type `Progress`; no
+  Disengaged, no throttle. Stopped immediately after turn 2; no retry, no other
+  thread. Temp: `%TEMP%\live-cache.mjs`, `%TEMP%\live-cache-1786263630194.json`.
+
+**Consequence.** The persistent-process precondition was met (one proxy, one
+thread, same request twice), but M365 itself did not re-emit a tool-shaped
+response on the repeat — it answered from thread context — so the verifier cache
+was never re-queried. Live `cache=hit` remains unobserved; the mechanism-level
+evidence (offline 10A) stands unchanged.
+
 ### Status transitions on completion
 
 - All green → mark 01 `resolved`; 02/03/04 unblock (02 flip default, 03
