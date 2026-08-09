@@ -1,6 +1,9 @@
 # 04 — Latency engineering for the verifier
 
-**Status:** ready-for-agent
+**Status:** resolved (2026-08-09 — no offline latency win; candidates dispositioned in
+Acceptance: cache-reuse measured/rejected, pipelining impossible, smaller/non-LLM violate
+frozen policy or need held-out/live data, bounded concurrency needs unavailable hardware
+or live M365)
 **Category:** enhancement
 **Type:** task
 **Blocked by:** 01
@@ -21,11 +24,24 @@ Options to squeeze further:
 
 ## Acceptance
 
-- [ ] Measure each candidate against the 10A baseline (cold median / p95,
-      cache-hit, single-flight)
-- [ ] Keep fail-closed arbitration intact (no EXECUTE without verifier)
-- [ ] No held-out/raw prompt drift; corpus frozen
-- [ ] Rec in `docs/hypotheses.md` with evidence + sample size
+- [x] Measure each candidate against the 10A baseline (cold median / p95,
+      cache-hit, single-flight) — **DISPOSITION** (measured + source review):
+      - **cache-reuse** (`--cache-reuse 256`): **measured and rejected** — no
+        latency win (med 24721→29524 ms, p95 50717→62545 ms); no ≥256-token
+        reusable prefix in this workload.
+      - **pipelining**: **impossible** — the gate input is the full planner
+        text (`tool-path.ts` `check(fullText)`), which exists only after M365
+        completes its turn; nothing exists to pre-verify.
+      - **non-LLM / smaller verifier**: violates the frozen 8H policy (Bonsai +
+        p4-minimal pinned) or needs held-out (ticket 03) / live M365 data.
+      - **bounded concurrency > cap-1**: needs unavailable hardware (one local
+        GPU serves one request at a time) or live M365 throttle-interaction data.
+- [x] Keep fail-closed arbitration intact (no EXECUTE without verifier) —
+      measured in both runs: timeout/error → TEXT, never EXECUTE; 8H parity 28/28.
+- [x] No held-out/raw prompt drift; corpus frozen — frozen dev corpus +
+      p4-minimal used; raw results preserved byte-for-byte.
+- [x] Rec in `docs/hypotheses.md` with evidence + sample size — §15 (n=28/run,
+      evidence + falsification).
 
 ## Measurement — --cache-reuse 256 vs baseline (2026-08-09, offline, no M365)
 
