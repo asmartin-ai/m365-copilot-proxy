@@ -37,3 +37,4 @@ Copy an existing probe rather than starting from scratch. All probes are
 | 06 | ConversationTransferToken migration | 🔴 unwritten | laptop, ~5 msgs |
 | 07 | Admin-portal usage dig (Playwright) | 🔴 unwritten | laptop (0 msgs — UI) |
 | 08 | Run the five 🟢 green probes | 🟢 exists | laptop + rested account |
+| 09 | Custom-instructions probe (user-proposed) | 🟢 plumbing exists | laptop multi-omp session + execution authorization |

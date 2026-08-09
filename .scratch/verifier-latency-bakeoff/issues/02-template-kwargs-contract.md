@@ -2,7 +2,6 @@
 
 **Status:** resolved
 **Type:** code
-**Type:** code
 **Category:** enhancement
 **Blocked by:** —
 
