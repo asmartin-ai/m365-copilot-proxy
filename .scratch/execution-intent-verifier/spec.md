@@ -39,7 +39,7 @@ Frozen constraints (do not drift):
 
 | # | Ticket | Status |
 |---|--------|--------|
-| 01 | Live validation (laptop, real M365) | `ready-for-human` |
+| 01 | Live validation (laptop, real M365) | `resolved` |
 | 02 | Flip default-on after live parity | `resolved` |
 | 03 | Held-out evaluation (32 cases) | `needs-info`, blocked by 02 |
-| 04 | Latency engineering (the open alternative) | `ready-for-agent`, blocked by 01 |
+| 04 | Latency engineering (the open alternative) | `resolved` |
