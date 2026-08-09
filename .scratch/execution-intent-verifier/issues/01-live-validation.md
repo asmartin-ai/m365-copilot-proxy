@@ -93,14 +93,26 @@ bun scripts/proxy-verify.mjs --agent --multiturn
 ### 5. Expected-log assertions
 
 From the debug log at `~/.config/opencode-m365/debug.log` (with
-`M365_DEBUG=1`):
+`M365_DEBUG=1`). Two log lines carry verifier state — the **structured
+record** (lowercase `intent-verifier:` prefix, emitted inside `check()`)
+and the **gate log** (title-case `Intent verifier:`, emitted at the gate;
+decision only):
 
-- `Intent verifier: decision=EXECUTE … error=null` → the tool call executes.
+- `intent-verifier: model=… policyVersion=8h promptHash=… responseHash=…
+  cache=miss decision=EXECUTE latencyMs=… error=null reasoningChars=…
+  ts=…` → the tool call executes. Assert the literal `intent-verifier:`
+  prefix and its fields (`model`, `policyVersion`, `promptHash`,
+  `responseHash`, `cache`, `decision`, `latencyMs`, `error`,
+  `reasoningChars`, `ts`).
+- The gate then logs `Intent verifier: decision=EXECUTE` (title-case,
+  decision only — no record fields).
 - `Intent verifier denied execution (TEXT|…)` → raw text returned, no
   execution (this is the 8H arbitration line).
 - `Intent verifier authorized execution of N tool call(s)` → EXECUTE path
   completed.
-- `cache=hit|shared` on a repeated tool-shaped turn within the same thread.
+- `cache=hit` (or `cache=shared` on an identical in-flight check) inside
+  the `intent-verifier:` record on a repeated tool-shaped turn within the
+  same thread.
 - `intent-verifier drift: responseHash changed` fires when the planner
   text under the same prefix key changed between requests; it treats the
   cached result as stale and re-verifies. Only logged when that happens —
@@ -110,8 +122,9 @@ From the debug log at `~/.config/opencode-m365/debug.log` (with
 
 1. Stop the LM Studio server (or `killall bonsai`).
 2. Send the same tool-shaped turn again.
-3. Assert: the proxy returns raw text — `decision=TEXT` from
-   error/timeout path — and NO tool executes.
+3. Assert: the proxy returns raw text — the `intent-verifier:` record shows
+   `decision=TEXT` with a non-null `error` (`timeout` / `network` /
+   `HTTP 500` / `HTTP 503`) — and NO tool executes.
 4. Restart the server; the next tool-shaped turn recovers to EXECUTE.
 
 ### 7. Throttle watch

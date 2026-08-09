@@ -31,14 +31,14 @@ Frozen constraints (do not drift):
 - 10A latency readiness (dev-only, Bonsai km42 EM): cold median 24.6 s / p95
   42.1 s; cache-hit 0 ms (byte-identical); single-flight dedup verified;
   fail-closed verified on timeout/error/invalid/UNCERTAIN.
-- Test baseline: 224 pass / 3 live-gated skip; `tsc` clean;
+- Test baseline: 225 pass / 3 live-gated skip; `tsc` clean;
   `validate-split.mjs` green (28 dev / 32 held-out).
 
 ## Ticket map
 
 | # | Ticket | Status |
 |---|--------|--------|
-| 01 | Live validation (laptop, real M365) | blocked — needs laptop |
-| 02 | Flip default-on after live parity | blocked by 01 + separate approval |
-| 03 | Held-out evaluation (32 cases) | unauthorized |
-| 04 | Latency engineering (the open alternative) | ready when direction chosen |
+| 01 | Live validation (laptop, real M365) | `ready-for-human` |
+| 02 | Flip default-on after live parity | `ready-for-agent`, blocked by 01 |
+| 03 | Held-out evaluation (32 cases) | `needs-info`, blocked by 02 |
+| 04 | Latency engineering (the open alternative) | `ready-for-agent`, blocked by 01 |
