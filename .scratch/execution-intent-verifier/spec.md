@@ -15,7 +15,8 @@ model's raw text.
 Frozen constraints (do not drift):
 
 - Corpus, splits, and the verifier prompt (`prompts/p4-minimal.txt`) are
-  frozen; `INTENT_VERIFIER_PROMPT` stays byte-identical to it.
+  frozen; `INTENT_VERIFIER_PROMPT` stays logically identical to it (trailing
+  newline canonicalized to LF for checkout-portable identity; content preserved).
 - Verifier NEVER validates its own held-out set (`heldout.json`, 32 cases,
   16 near-pairs).
 - No live M365 or Bonsai in tests — only the verifier EXECUTE authorizes
