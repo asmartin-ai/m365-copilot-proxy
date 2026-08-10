@@ -38,6 +38,9 @@ A request selects this path only when all conditions hold:
 - `M365_CLIENT_ATTESTATION=1` is set on the proxy.
 - The request has `X-M365-Execution-Gate: attestation-v1`.
 - The request has `X-M365-Attestation-Client: pi`, `omp`, or `codex`.
+- The request has `X-M365-Attestation-Proof` =
+  HMAC-SHA256(secret, `"attestation-v1\n" + client`) hex — proves the caller
+  holds the shared secret. A bare header must not strip the 8H gate.
 - The configured shared secret for that client exists.
 
 Any missing or invalid condition uses the existing 8H verifier path. There is
@@ -69,7 +72,12 @@ pre-execution boundary.
 
 Process restart, eviction, expiry, an unknown id, or any mismatch deny
 execution. Version 1 accepts no id-less fallback. It does not infer a candidate
-from a command hash or a tool result.
+from a command hash or a tool result. The one exception: a tool-result id the
+proxy itself emitted through the 8H verifier path (tracked by `SessionPool`)
+is accepted without a candidate — that path never registers one. An id that
+was never emitted by this proxy is always denied (fabricated ids cannot
+bypass the gate). Validation covers every tool message in the request before
+any approval is consumed, so a 409 does not burn earlier candidates.
 
 ## Attestation endpoint
 
