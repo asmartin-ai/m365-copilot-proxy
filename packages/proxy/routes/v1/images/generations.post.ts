@@ -1,10 +1,10 @@
-import { ChatCompletionRequest, handleChatCompletion } from "@m365-copilot/proxy-lib";
+import { ImageGenerationRequest, handleImageGeneration } from "@m365-copilot/proxy-lib";
 import { pool } from "../../../server-pool";
 
 export default defineEventHandler(async (event) => {
-  let body: ReturnType<typeof ChatCompletionRequest.parse>;
+  let body: ReturnType<typeof ImageGenerationRequest.parse>;
   try {
-    body = ChatCompletionRequest.parse(await readBody(event));
+    body = ImageGenerationRequest.parse(await readBody(event));
   } catch (err: any) {
     return new Response(
       JSON.stringify({ error: { message: err.message, type: "invalid_request_error" } }),
@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  // Propagate client disconnects as an AbortSignal so a long M365 turn gets
-  // cancelled (Stop frame) instead of running on after the caller gave up.
+  // Propagate a client disconnect as an AbortSignal so a long M365 image turn
+  // gets cancelled instead of running on after the caller gave up.
   // Only ServerResponse 'close' fires on premature connection termination:
   // IncomingMessage 'close' fires once the request body is fully read (Node
   // >=16), i.e. inside readBody above — listening on it would abort
@@ -27,12 +27,10 @@ export default defineEventHandler(async (event) => {
     res.once("close", () => { if (!finished && !res.writableEnded) ac.abort(); });
   }
 
-  // handleChatCompletion returns a Web Response (JSON or an SSE ReadableStream
-  // when stream:true). Returning it directly lets h3 forward it untouched.
-  return handleChatCompletion(body, pool, {
+  // Gate each M365 generation through the pool scheduler (new conversation per
+  // image) so concurrent requests cannot exhaust the account thread budget.
+  return handleImageGeneration(body, {
     signal: ac.signal,
-    sessionKey: getHeader(event, "x-m365-session-key") ?? undefined,
-    executionGate: getHeader(event, "x-m365-execution-gate") ?? undefined,
-    attestationClient: getHeader(event, "x-m365-attestation-client") ?? undefined,
+    schedule: (task) => pool.schedule({ newConversation: true }, task),
   });
 });
