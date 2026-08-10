@@ -1,17 +1,21 @@
 # M365 Capability Expansion
 
-**Status:** Backlog — probes need a live M365 (laptop); `optionsSets` is
-currently sent empty.
+**Status:** Backlog — probes need a live M365 (laptop); code-interpreter and
+image-gen `optionsSets` are already wired on the agent-less path, the rest of
+the catalogue is not.
 **Source:** `docs/hypotheses.md` §8 (June 13 web-research dig)
 
 ## Why this matters
 
-The chat payload sends `optionsSets: []` — empty. Every other implementation
-(Microsoft red-team tool, PyRIT, kuchris, g365, SydneyQt) ships rich
-`optionsSets` arrays. We are likely leaving capabilities off the table by
-omission; several of those capabilities (real code execution, native tool
-calls, memory) attack the live prose-compliance problem from the capability
-layer, not the prompt layer.
+The chat payload historically sent `optionsSets: []` — empty. Every other
+implementation (Microsoft red-team tool, PyRIT, kuchris, g365, SydneyQt) ships
+rich `optionsSets` arrays. The code-interpreter set
+(`CODE_INTERPRETER_OPTIONS_SETS` in `packages/core/src/session.ts`, on by
+default on the agent-less path, `M365_NO_CODE_INTERPRETER=1` to disable) and
+image-gen set are wired; memory, custom-instructions, CIQ variants, and the
+rest of the catalogue are not. Several of those capabilities (real code
+execution, native tool calls, memory) attack the live prose-compliance problem
+from the capability layer, not the prompt layer.
 
 ## Hard constraint
 
