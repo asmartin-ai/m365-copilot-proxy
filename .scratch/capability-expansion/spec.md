@@ -31,6 +31,10 @@ hostile-record of that boundary, not as work to start.
 | 05 | Grounding & multimodal | H8.9, H8.10, H8.11, H8.12 | laptop |
 | 06 | Memory, instructions, behavior | H8.13, H8.14, H8.15, H8.16 | laptop |
 
+Backlog feature (user 2026-08-09): **07 — surface M365 built-in tools to
+OpenAI-compatible clients** (web search / images / hosted code execution) as
+tools or structured output. See `issues/07-m365-builtin-tools-feature.md`.
+
 Verdicts **always** land in `docs/hypotheses.md` (sample size + evidence)
 and get promoted to `docs/m365-copilot-api.md` when conclusive — that file
 is the source of truth, not the tickets.
