@@ -28,7 +28,7 @@ established 2026-08-09.
 
 ## 2. Sync & branching — the LAN bare repo
 
-- **LAN bare remote**: `kenja@<pc-ip>:/path/to/copilot-lan/shared/m365-copilot-proxy.git` (SSH). The laptop's `origin` points at the same bare repo over SSH.
+- **LAN bare remote**: `user@lan-host:/path/to/copilot-lan/shared/m365-copilot-proxy.git` (SSH). The laptop's `origin` points at the same bare repo over SSH.
 - **Push model**: work is committed on the PC, pushed to a **sync feature
   branch** (`sync/<topic>-<date>`), never `lan/main` and never GitHub directly.
 - **LAN main quarantine**: still in force — do NOT push to `lan/main` or GitHub

@@ -108,5 +108,5 @@ limitation is tool calling.** Evidence:
   other candidates (token-free-gateway, llm-web-api, web2api) are KEPT for
   comparison — do not drop them.
 - Implementation surface lives outside this repo (free-pool LiteLLM in the
-  local-models, omp models.yml in `~/.omp`); this ticket is the backlog
+  local LLM stack, omp models.yml in `~/.omp`); this ticket is the backlog
   record and the bench oracle lives here.

@@ -34,7 +34,7 @@ password login. Fallout of the password→MSAL refactor.
 ## Working (modern) path — proved live 2026-08-11
 
 - `getTokenSilent()` from the msal cache returns a live token:
-  `account@example.com`, oid `REDACTED_OID-...` (verified via
+  `<account-email>`, oid `<oid>` (verified via
   `node -e` against `dist/index.mjs`)
 - `loginInteractive()` in `packages/core/src/auth.ts` drives Playwright with
   `chromium.launchPersistentContext(getBrowserProfileDir(), { headless: false })`

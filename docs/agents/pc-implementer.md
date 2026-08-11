@@ -72,7 +72,7 @@ Do these steps in order at the start of a session.
 - Git Bash has no process substitution.
 - Committed JSON files carry a UTF-8 BOM.
 - Git Bash `grep` and `sed` fail on `/c/`-style paths.
-- `HOME` is empty in Git Bash. Use `USERPROFILE=C:\Users\PC_HOST`.
+- `HOME` is empty in Git Bash. Use `USERPROFILE=C:\Users\<username>`.
 - Port 1234 is LM Studio on the PC. It serves qwen3.5-4b and friends, not
   the verifier. The verifier is llama-server with Bonsai-27B on the laptop.
 - The laptop connects into the PC sshd. The link is
