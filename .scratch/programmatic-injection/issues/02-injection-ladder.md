@@ -16,11 +16,17 @@ turn, choosing between channels and verifying each actually landed.
 A controller in `packages/core/src/session.ts` (owns `sendChat`/optionsSets)
 that on session open walks ranked injection channels:
 
-0. **optionsSets gate flags** on the WS payload (`add_custom_instructions`)
-1. **CDP textarea rewrite** of account custom instructions
-   (`_profile-cdp.mjs` fill + Save)
+0. **Custom-instructions textarea (PRIMARY — proven 2026-08-11)**: the CDP
+   Settings→Personalization textarea is server-persisted and applied to raw
+   agent-less WS turns by default (no flag needed — A1 proved both flag-on and
+   flag-off recall the saved instruction). Write via native value-setter +
+   input/change events (React), Save. This is the no-approval durable channel.
+1. **optionsSets gate flags** on the WS payload — the `add_custom_instructions`
+   flag appears unnecessary (server applies by default); keep as a request-shape
+   control but not load-bearing.
 2. **prompt-preamble prepend**
-3. **same-token sibling REST** (Graph/M365 settings) — secondary
+3. **same-token sibling REST** (Graph/M365 settings) — secondary (Graph
+   settings is content-discovery only; Mail.ReadWrite 403 — not a path).
 
 **REMOVED channel (2026-08-11):** memory-plugin write through chat turns
 (`update_memory_plugin`/`enable_inferred_memory_read`). E-O2 probe (ticket 01)
