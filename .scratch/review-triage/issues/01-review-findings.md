@@ -1,6 +1,6 @@
 # 01 — Review findings + session loose ends for triage
 
-**Status:** needs-triage
+**Status:** resolved (2026-08-10; items 1–3 fixed, item 4 honored)
 **Category:** enhancement
 **Type:** mixed
 **Blocked by:** —
@@ -56,9 +56,9 @@ the proof-header change).
 
 ## Acceptance
 
-- [ ] Each finding dispositioned (fix / wontfix / defer) in a follow-up
+- [x] Each finding dispositioned (fix / wontfix / defer) in a follow-up
       session; decision recorded here.
-- [ ] (item 2) evidence files either quarantined or explicitly kept with a
+- [x] (item 2) evidence files either quarantined or explicitly kept with a
       pointer to the docs note.
 
 ## Comments
@@ -66,3 +66,15 @@ the proof-header change).
 - Source: code-review skill run 2026-08-10 + session wrap-up.
 - Item 1 and item 3 are ready-to-execute; item 2 is a one-line decision;
   item 4 is a constraint reminder, not code.
+- 2026-08-10 dispositions: item 1 FIXED — AGENTS.md now points at
+  `bun run test:unit` and documents the bare-`bun test` trap (native runner,
+  not the vitest suite). Item 2 FIXED — `throttle-telemetry.ndjson` +
+  `session-state.json` moved to `~/.config/opencode-m365/quarantine-2026-08-10/`
+  (reversible; both were unit-test pollution with no live evidence). Item 3
+  DONE — auth CdpClient → playwright landed (TDD, seams `extractAuthCode` +
+  `waitForAuthCode`, 8 tests); the interactive-login smoke PASSED on the PC
+  (visible Chromium, nativeclient code scraped, token acquired, msal-cache
+  written 20:11), and the live `proxy-verify --agent --multiturn` tool loop
+  passed end to end with the 8H verifier on LM Studio
+  (`M365_INTENT_VERIFIER_MODEL=bonsai-27b`). Item 4 HONORED — live runs
+  sequential, thread-budget capped, verifier gated on LM Studio.

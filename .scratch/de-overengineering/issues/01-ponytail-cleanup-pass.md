@@ -112,6 +112,27 @@ Item 6 additionally requires the interactive-login smoke (see acceptance).
   files, plus one regression test). Item 6 (CdpClient → playwright) deferred
   per its own condition: it needs a session that can run a real interactive
   login, and auth is the most fragile surface in the repo.
+- 2026-08-10 (evening) item 6 LANDED. auth.ts CdpClient → playwright
+  `launchPersistentContext` + `page.on("request")` scraping; the CDP
+  machinery (reserveLoopbackPort, zod CDP schemas, CdpClient,
+  getCdpWebSocketUrl) is gone. TDD seams: `extractAuthCode` +
+  `waitForAuthCode` (module exports, 8 unit tests in auth.test.ts).
+  Interactive-login smoke PASSED on the PC: the playwright flow launched a
+  visible Chromium window, the user completed Microsoft sign-in, the
+  nativeclient code was scraped, and `msal-cache.json` was written
+  (2026-08-10 20:11). Live `proxy-verify --agent --multiturn` then passed
+  end to end (turn 1 tool_call + turn 2 echo of the tool result).
+  Environment notes: playwright-core's connection layer (pipe AND
+  connectOverCDP WebSocket) times out under Bun 1.3.14 on this PC — raw
+  `ws`-package and Bun-native WebSocket clients connect fine — so the
+  login/proxy bins that drive a browser must run under `node` on this box.
+  Also: `packages/proxy/node_modules/@m365-copilot/*` are stale nested
+  COPIES that shadow the workspace symlinks (including a third, deeper core
+  copy under proxy-lib); after `bun run build`, refresh their `dist/` from
+  the workspace builds (proper removal of the nested copies deferred —
+  Windows `mv`/`rm` are blocked while locked).
+- Verification: full suite green (297 pass / 3 skip at the 7-test stage;
+  8th timeout-unsubscribe test added after code review).
 - Verification: `bun run build && bun run vitest run` = 290 pass / 3 skip
   (the 3 skips are the `M365_LIVE`-gated live suite) — identical to pristine
   HEAD (289/3) plus the one new name-key tolerance test. Adversarial review
