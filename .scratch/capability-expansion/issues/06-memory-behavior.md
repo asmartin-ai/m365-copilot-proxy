@@ -3,7 +3,7 @@
 **Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** laptop
+**Blocked by:** —
 **Source:** `docs/hypotheses.md` §8.4 H8.13–H8.16
 
 ## Goal

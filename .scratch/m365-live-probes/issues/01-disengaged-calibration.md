@@ -3,7 +3,7 @@
 **Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** laptop M365 access (rested account)
+**Blocked by:** —
 **Source:** `docs/hypotheses.md` §7 row 🔴; F6
 
 ## Goal

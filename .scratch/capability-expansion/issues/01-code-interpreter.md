@@ -3,7 +3,7 @@
 **Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** laptop (source-backed, ~5 msgs)
+**Blocked by:** —
 **Source:** hypotheses §8.1 H8.1 + H8.2
 
 ## Goal

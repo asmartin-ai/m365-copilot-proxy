@@ -1,9 +1,9 @@
 # 02 — Image generation capability canary
 
-**Status :** ready-for-agent
+**Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** laptop (~1 msg)
+**Blocked by:** —
 **Source:** `docs/hypotheses.md` §8.1 H8.3
 
 ## Goal

@@ -3,7 +3,7 @@
 **Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** laptop (0 msgs — GETs)
+**Blocked by:** —
 **Source:** `docs/hypotheses.md` §7 row 🔴; F5
 
 ## Goal

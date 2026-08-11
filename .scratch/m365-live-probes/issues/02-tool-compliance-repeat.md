@@ -3,7 +3,7 @@
 **Status:** ready-for-agent
 **Category:** enhancement
 **Type:** research
-**Blocked by:** rested account (~150 msgs), laptop M365
+**Blocked by:** —
 **Source:** `docs/hypotheses.md` §7 row 🟢; F2–F4
 
 ## Goal
