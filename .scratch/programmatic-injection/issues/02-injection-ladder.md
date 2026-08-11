@@ -1,9 +1,9 @@
 # 02 — Injection-channel ladder controller (canary-verified, self-healing)
 
-**Status:** backlog
+**Status:** ready-for-agent
 **Category:** enhancement
 **Type:** code
-**Blocked by:** 01 (prove the primary channel exists first)
+**Blocked by:** —
 
 ## Context
 
@@ -16,13 +16,20 @@ turn, choosing between channels and verifying each actually landed.
 A controller in `packages/core/src/session.ts` (owns `sendChat`/optionsSets)
 that on session open walks ranked injection channels:
 
-0. **optionsSets gate flags** on the WS payload (`add_custom_instructions`,
-   `update_memory_plugin`, `enable_inferred_memory_read`)
+0. **optionsSets gate flags** on the WS payload (`add_custom_instructions`)
 1. **CDP textarea rewrite** of account custom instructions
    (`_profile-cdp.mjs` fill + Save)
-2. **memory-plugin write** through chat turns (MemoryUpdate allowedMessageType)
-3. **prompt-preamble prepend**
-4. **same-token sibling REST** (Graph/M365 settings) — secondary
+2. **prompt-preamble prepend**
+3. **same-token sibling REST** (Graph/M365 settings) — secondary
+
+**REMOVED channel (2026-08-11):** memory-plugin write through chat turns
+(`update_memory_plugin`/`enable_inferred_memory_read`). E-O2 probe (ticket 01)
+proved it is **not viable on this "Copilot Chat (Basic)" tier** — the model
+echoes the memory in-conversation but cannot "permanently store" it
+(mailbox/oid persistence does not happen), confirming the GLM-5.2 Basic-license
+challenge. Do not build the ladder on this channel for this account. Re-add
+only if a tier/tenant with Copilot Memory actually enabled (Enhanced
+personalization + authoring entitlement) is ever used.
 
 Every channel verified by a **mapping-canary**: injected steering plants a
 codeword→reply mapping that exists ONLY inside the injected text; a probe turn
@@ -38,7 +45,8 @@ without the model echoing its own prompt.
 - **Honest degrade:** when every breaker is open, stamp responses
   `system_fingerprint: 'unsteered'` instead of silently shipping uninjected
   output. (Promote to a first-class OpenAI-compatible field:
-  `'steered:channel=memory'` | `'unsteered'`.)
+  `'steered:channel=custom-instr'` | `'steered:channel=textarea'` |
+  `'unsteered'`.)
 
 ## Forbidden (from GLM cross-check)
 
@@ -48,8 +56,8 @@ without the model echoing its own prompt.
 
 ## Acceptance
 
-- [ ] Channel 0 proven first (ticket 01) — ladder only builds on individually
-      proven channels
+- [ ] Channel 0 (optionsSets flags) proven first — ladder only builds on
+      individually proven channels (memory channel dropped: ticket 01 E-O2)
 - [ ] Mapping-canary verifier implemented (not a naive echo-probe)
 - [ ] Ladder state machine (channel/status/breaker JSON) + rehydration sled
 - [ ] Honest-degrade `system_fingerprint` on all-open breakers
