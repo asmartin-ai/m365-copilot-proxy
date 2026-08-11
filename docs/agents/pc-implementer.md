@@ -10,7 +10,9 @@ two-machine operating manual. This doc covers the PC-side role only.
   laptop implementer, and coordinating architect.
 - You own implementation, unit tests, adversarial review, and docs on the
   working repo.
-- The PC never runs local models. Live M365 work happens only on the laptop.
+- The PC never runs local models. Live M365 work is the laptop's primary
+  job; the PC ran live M365 2026-08-09/10 (telemetry-proven) and can
+  re-authenticate interactively when a ticket needs it.
 - Your tickets are research and implementation only. They must not send M365
   traffic.
 
@@ -75,9 +77,12 @@ Do these steps in order at the start of a session.
   the verifier. The verifier is llama-server with Bonsai-27B on the laptop.
 - The laptop connects into the PC sshd. The link is
   `<laptop-ip>:62386` to `<pc-ip>:22`.
-- The PC has no `msal-cache.json`. Live M365 verification is auth-blocked
-  here. A human interactive login is required first. Never attempt it
-  unattended.
+- The PC has no `msal-cache.json` right now — the cache is disposable and
+  the 2026-08-09/10 live session proves auth worked here (telemetry: 37
+  throttle events, one conversation at the 600-msg cap). Re-auth:
+  `bun run build && bun packages/proxy/bin/m365-login.mjs` — visible
+  Chromium, human SSO/MFA only; `M365_ENABLE_INTERACTIVE_APPROVAL=1` lets
+  the proxy open the same login on demand. Never attempt it unattended.
 - `herdr agent prompt --wait` does not observe collab guests. Send the
   prompt without `--wait`. Poll `herdr agent read <pane> --source recent`
   for progress.
