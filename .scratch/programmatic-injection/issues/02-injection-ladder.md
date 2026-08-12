@@ -1,6 +1,6 @@
 # 02 — Injection-channel ladder controller (canary-verified, self-healing)
 
-**Status:** ready-for-agent
+**Status:** resolved (2026-08-11 — offline implementation landed: steering state machine + rehydration sled, mapping-canary verifier, honest-degrade `system_fingerprint`; live canary/latch + browser smoke + `proxy-verify --multiturn` deferred pending explicit authorization, per plan precondition)
 **Category:** enhancement
 **Type:** code
 **Blocked by:** —
@@ -62,14 +62,16 @@ without the model echoing its own prompt.
 
 ## Acceptance
 
-- [ ] Channel 0 (optionsSets flags) proven first — ladder only builds on
+- [x] Channel 0 (optionsSets flags) proven first — ladder only builds on
       individually proven channels (memory channel dropped: ticket 01 E-O2)
-- [ ] Mapping-canary verifier implemented (not a naive echo-probe)
-- [ ] Ladder state machine (channel/status/breaker JSON) + rehydration sled
-- [ ] Honest-degrade `system_fingerprint` on all-open breakers
-- [ ] No regression: existing fenced shell-routing + verifier (ADR-0002) paths
+- [x] Mapping-canary verifier implemented (not a naive echo-probe)
+- [x] Ladder state machine (channel/status/breaker JSON) + rehydration sled
+- [x] Honest-degrade `system_fingerprint` on all-open breakers
+- [x] No regression: existing fenced shell-routing + verifier (ADR-0002) paths
       unchanged
-- [ ] Full suite green; live tool loop verified (`proxy-verify.mjs --multiturn`)
+- [~] Full suite green (329 passed / 3 skipped); live tool loop
+      (`proxy-verify.mjs --multiturn`) DEFERRED — gated behind
+      `M365_STEERING_LIVE=1` + laptop auth
 
 ## Comments
 
@@ -78,3 +80,30 @@ without the model echoing its own prompt.
 - **2026-08-11** — opened from the injection ideation. This is the primary
   keep-item (idea 1). Blocked on the channel-0 proof (ticket 01) so the ladder
   doesn't build on an unproven channel.
+- **2026-08-11 (implementation, PC)** — landed offline slices:
+  - `packages/core/src/steering.ts` (+ `steering.test.ts`): state machine
+    (channel/breaker/latch JSON at `~/.config/opencode-m365/steering.json`,
+    `M365_STEERING_FILE` override), rehydration sled (`replayLastGood`),
+    `ensureSteered()` hook, mapping-canary `verifyChannel()` (plants a fresh
+    codeword→reply mapping, probes recall via `scripts/_steering-canary.mjs`
+    → `_probe-chat.mjs` oneTurn), `setCustomInstruction()` (spawns
+    `scripts/set-custom-instruction.mjs` under node — CDP write of the
+    custom-instructions textarea via native value-setter + input/change,
+    Save, re-read verify).
+  - All live side effects gated behind `M365_STEERING_LIVE=1`; without it the
+    hook is a state-file read only. Thread-budget pacing (≥3 min between
+    canaries), re-verify window (6 h), breaker threshold (3), throttle
+    verdicts never trip breakers.
+  - `session.ts`: `ensureSteered()` once per CopilotSession (fresh or resumed)
+    before the first turn; `CopilotStream.steeringFingerprint` getter.
+  - Honest-degrade: top-level `system_fingerprint` on chat.completions JSON +
+    stream chunks (`response-renderer.ts`), Responses envelope
+    (`responses.ts`), and `x_m365_system_fingerprint` usage mirror
+    (`usage-builder.ts`).
+  - Verification: `bun run build` green; `bun run test:unit` 329 passed / 3
+    skipped / 0 failed (was 316 — +13 new tests). `node --check` clean on
+    both new scripts.
+  - DEFERRED (needs explicit authorization + laptop): live canary/latch runs,
+    CDP browser smoke of `set-custom-instruction.mjs` (selectors marked for
+    laptop tuning), `proxy-verify.mjs --multiturn`, hypotheses § evidence +
+    `experiments/injection-ladder/` results.
