@@ -1,6 +1,6 @@
 # 03 — Route-only output-boundary steering (no prose rewriting)
 
-**Status:** backlog
+**Status:** resolved (2026-08-11 — output-boundary contract landed: attribution gate + drift guard + docs; live baseline capture + `proxy-verify --multiturn` deferred pending explicit authorization, per plan precondition)
 **Category:** enhancement
 **Type:** code
 **Blocked by:** —
@@ -33,11 +33,12 @@ output-boundary contract:
 
 ## Acceptance
 
-- [ ] Existing fence-routing unchanged (no regression to tool loop)
-- [ ] Steering-attribution canary implemented where applicable
-- [ ] Disengagement/dea-drift check under injection (baseline vs injected)
-- [ ] `system_fingerprint` emitted (steered/unsteered)
-- [ ] Full suite green; `proxy-verify.mjs --multiturn` passes
+- [x] Existing fence-routing unchanged (no regression to tool loop)
+- [x] Steering-attribution canary implemented where applicable
+- [x] Disengagement/dea-drift check under injection (baseline vs injected)
+- [x] `system_fingerprint` emitted (steered/unsteered)
+- [~] Full suite green (346 passed / 3 skipped); live `proxy-verify.mjs
+      --multiturn` DEFERRED — gated behind explicit authorization
 
 ## Comments
 
@@ -46,4 +47,24 @@ output-boundary contract:
 - **2026-08-11** — opened from injection ideation (idea 7, GLM "route, don't
   rewrite"). Complements ticket 02 (the ladder feeds it steering; this is the
   output contract).
+- **2026-08-11 (implementation, PC)** — landed offline slices:
+  - Attribution gate (`packages/proxy-lib/src/tool-path.ts`): `ToolPathDeps`
+    gains a `steeringFingerprint` thunk read at decision time; with
+    `M365_STEERING=1` a parsed fence routes to tools ONLY on `steered:*`
+    fingerprints, else degrades to raw text. `M365_STEERING` unset ⇒ legacy
+    routing byte-for-byte (regression-tested).
+  - Drift guard (`packages/proxy-lib/src/drift-guard.ts` + test): per-bucket
+    ring sink (unsteered vs steered) accumulating Disengaged events +
+    `dea_violation`; `driftAlert()` fires on `DRIFT_DEA_FACTOR=3` /
+    `DRIFT_DISENGAGED_GAP=0.1` / `DRIFT_MIN_SAMPLES=5`. Observational only —
+    never fails requests, never auto-fails the ladder. Wired in
+    `handler.ts` per turn (fingerprint + `messageType === "Disengaged"` +
+    `scores.dea_violation`).
+  - Docs: `docs/m365-copilot-api.md` §10 output-boundary subsection +
+    §13 source-map rows.
+  - Verification: `bun run build` green; `bun run test:unit` 346 passed / 3
+    skipped / 0 failed (+17 new). Focused run 39/39.
+  - DEFERRED (explicit authorization + laptop): baseline-vs-injected capture
+    (plan step 5), `experiments/output-routing/` deltas, live
+    `proxy-verify.mjs --multiturn`.
 
