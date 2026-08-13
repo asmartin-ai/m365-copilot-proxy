@@ -1,6 +1,6 @@
 # 01 — Migrate capture scripts off dead loadSecrets() to msal/persistent profile
 
-**Status:** needs-triage
+**Status:** resolved (2026-08-12 — migration already shipped as commit `f5a9b1a` "refactor: use persistent browser profile for live probes"; this ticket was stale. All acceptance greps verified zero hits, all 13 scripts pass `node --check`, protocol doc auth section is modern. Live boot smoke deferred to the authorized live window.)
 **Category:** bug
 **Type:** code
 **Blocked by:** —
@@ -74,3 +74,26 @@ password login. Fallout of the password→MSAL refactor.
 - **2026-08-11** — surfaced while trying to boot the GUI capture ("pull up the
   playwright browser like last time") for the token-usage / memory
   investigation. Every capture script is broken vs current auth.
+
+- **2026-08-12 (reconciliation, PC)** — **ticket was stale: the migration
+  already shipped.** Commit `f5a9b1a` "refactor: use persistent browser
+  profile for live probes" (2026-08-12 session) migrated all 13 scripts;
+  this ticket never got its status flipped. Verified:
+  - `loadSecrets` → zero hits in `scripts/` + `scripts/da-app/` (only this
+    ticket/plan and the docs mention the dead name).
+  - `loginAutomated`, `creds.password`, `creds.mfaSecret`, TOTP fills → zero
+    hits in scripts.
+  - All 13 scripts (`m365-gui-capture`, `gateway-capture`, `studio-dig`,
+    `cancel-frame-capture`, `gateway-explore`, `create-full-bot`,
+    `m365-gui-emulate`, `throttle-recovery-ab`, `login-probe`, and the four
+    `da-app/sideload-*`) boot via
+    `chromium.launchPersistentContext(getBrowserProfileDir(), …)` with the
+    interactive-sign-in fallback in the open window; `login-probe` +
+    `throttle-recovery-ab` use `getTokenSilent()`/`loginInteractive()`.
+    Every script passes `node --check`.
+  - `docs/m365-copilot-api.md` auth section is modern (gotcha rows cite
+    `loginInteractive()`/`extractAuthCode()`, "interactive login, no
+    auto-fill"); no stale `secrets.json` flow to remove.
+  - Live boot smoke (capture WS frames) deferred to the authorized live
+    window; the 2026-08-12 session already proved the silent-token path
+    (`getTokenSilent()` OK, oid `8453fd75`).

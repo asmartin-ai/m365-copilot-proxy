@@ -1,5 +1,5 @@
 # Plan: Migrate capture scripts off dead loadSecrets() to msal/persistent profile
-> Ticket: .scratch/capture-path-migration/issues/01-migrate-off-loadSecrets.md · Status: needs-triage · Blocked by: none
+> Ticket: .scratch/capture-path-migration/issues/01-migrate-off-loadSecrets.md · Status: resolved (2026-08-12) · Blocked by: none
 
 ## Purpose
 Finish the auth-path migration the capture scripts missed after the
