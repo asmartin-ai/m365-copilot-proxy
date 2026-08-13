@@ -37,22 +37,22 @@ challenge. Do not build the ladder on this channel for this account. Re-add
 only if a tier/tenant with Copilot Memory actually enabled (Enhanced
 personalization + authoring entitlement) is ever used.
 
-Every channel verified by a **mapping-canary**: injected steering plants a
-codeword→reply mapping that exists ONLY inside the injected text; a probe turn
-asks for the codeword without ever showing the reply. Recall proves landing
+Every implemented channel is verified by a **mapping-canary**: injected steering
+plants a codeword→reply mapping that exists ONLY inside the injected text; a probe
+turn asks for the codeword without ever showing the reply. Recall proves landing
 without the model echoing its own prompt.
 
-- A pass latches the channel for the session.
+- A pass latches the proven channel for the session.
 - A fail retries under a rotated throttle profile (rate/jitter/payload shape),
-  then trips a per-channel circuit breaker after N failures.
+  then trips its circuit breaker after N failures.
 - **Rehydration sled:** persist last-good channel config as small JSON
   (channel, payload, breaker state); replay as the initial handshake on every
   reconnect before the first user turn.
-- **Honest degrade:** when every breaker is open, stamp responses
+- **Honest degrade:** when the breaker is open, stamp responses
   `system_fingerprint: 'unsteered'` instead of silently shipping uninjected
-  output. (Promote to a first-class OpenAI-compatible field:
-  `'steered:channel=custom-instr'` | `'steered:channel=textarea'` |
-  `'unsteered'`.)
+  output. The only steered value currently emitted is
+  `'steered:channel=textarea'`. Options-set and prompt-preamble variants remain
+  unimplemented candidates, not fallback channels.
 
 ## Forbidden (from GLM cross-check)
 
@@ -62,14 +62,15 @@ without the model echoing its own prompt.
 
 ## Acceptance
 
-- [x] Channel 0 (optionsSets flags) proven first — ladder only builds on
-      individually proven channels (memory channel dropped: ticket 01 E-O2)
+- [x] Proven textarea channel is the only ladder channel currently enabled;
+      unimplemented options-set and prompt-preamble candidates stay out of the
+      fallback path.
 - [x] Mapping-canary verifier implemented (not a naive echo-probe)
 - [x] Ladder state machine (channel/status/breaker JSON) + rehydration sled
 - [x] Honest-degrade `system_fingerprint` on all-open breakers
 - [x] No regression: existing fenced shell-routing + verifier (ADR-0002) paths
       unchanged
-- [~] Full suite green (329 passed / 3 skipped); live tool loop
+- [~] Full suite green (346 passed / 3 skipped); live tool loop
       (`proxy-verify.mjs --multiturn`) DEFERRED — gated behind
       `M365_STEERING_LIVE=1` + laptop auth
 
@@ -100,10 +101,16 @@ without the model echoing its own prompt.
     stream chunks (`response-renderer.ts`), Responses envelope
     (`responses.ts`), and `x_m365_system_fingerprint` usage mirror
     (`usage-builder.ts`).
-  - Verification: `bun run build` green; `bun run test:unit` 329 passed / 3
-    skipped / 0 failed (was 316 — +13 new tests). `node --check` clean on
-    both new scripts.
+  - Verification: `bun run build` green; `bun run test:unit` 346 passed / 3
+    skipped / 0 failed (was 329 — +17 tests from output-routing/drift-guard
+    coverage). `node --check` clean on both new scripts.
   - DEFERRED (needs explicit authorization + laptop): live canary/latch runs,
     CDP browser smoke of `set-custom-instruction.mjs` (selectors marked for
     laptop tuning), `proxy-verify.mjs --multiturn`, hypotheses § evidence +
     `experiments/injection-ladder/` results.
+
+- **2026-08-12 review cleanup** — removed the unimplemented `custom-instr`
+  fallback alias from the state machine and fingerprint contract. It never
+  wrote the payload or passed it to the canary, so treating it as steered could
+  have reported a false positive. Rehydrate old state files with that channel
+  as `unsteered`.
