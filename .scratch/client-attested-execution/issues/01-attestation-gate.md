@@ -105,4 +105,4 @@ confirm a non-opt-in request still takes the injected 8H verifier path.
   - Blocking bug found + fixed en route: the Nitro app crashed on ANY request
     error (404 included) under Bun (hook callers returned undefined; see
     `packages/proxy/plugins/error-hook.ts`). Without that fix the smoke's
-    first request killed the process. Fix commit `d7d7158`.
+    first request killed the process. Fix commit `f24d69a`.
