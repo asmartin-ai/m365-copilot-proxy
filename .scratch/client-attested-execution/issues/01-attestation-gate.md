@@ -83,3 +83,26 @@ confirm a non-opt-in request still takes the injected 8H verifier path.
 - Resolved 2026-08-09: `bun run test` passed (248 passed, 3 live-gated skipped).
   Focused attestation coverage passed: 42 tests across registry, tool path,
   Chat Completions handler, and Responses wire. No M365 request was made.
+
+- **2026-08-12 (live proof-header smoke, PC, authorized + doubled thread
+  budget)** — `scripts/attestation-live-smoke.mjs` ran the full wire contract
+  against a real proxy + real M365. ALL PASS:
+  - Gate emits a `bash` tool call (`hostname`) under
+    `X-M365-Execution-Gate: attestation-v1` + proof header.
+  - `POST /v1/attestations` allow; identical-payload replay denied (nonce
+    window); expired-timestamp POST denied (60 s TTL); re-attest of an
+    already-authorized candidate denied (single-use).
+  - Tool result accepted (200); the model used the real local output
+    (`DESKTOP-AA`) — genuine tool loop through the gate.
+  - Fabricated tool_call_id → HTTP 409, body `attestation_required` (the
+    script asserts the status; the body was observed).
+  - No-proof request returned no tool calls (asserted) — 8H fail-closed with
+    the verifier down; the fence came back as raw text (observed, not
+    asserted).
+  - Re-run: `M365_ATTESTATION_SECRET=<shared> node
+    scripts/attestation-live-smoke.mjs` (proxy env: `M365_CLIENT_ATTESTATION=1`
+    + same secret).
+  - Blocking bug found + fixed en route: the Nitro app crashed on ANY request
+    error (404 included) under Bun (hook callers returned undefined; see
+    `packages/proxy/plugins/error-hook.ts`). Without that fix the smoke's
+    first request killed the process. Fix commit `d7d7158`.
