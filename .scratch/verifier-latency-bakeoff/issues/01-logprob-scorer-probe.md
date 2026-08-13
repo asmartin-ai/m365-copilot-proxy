@@ -1,6 +1,6 @@
 # 01 — Logprob-scorer probe + latency decomposition
 
-**Status:** ready-for-agent
+**Status:** resolved (REJECTED — Bonsai-27B thinking-off logprob scorer + tokenizer-aware variants produced unsafe false positives; NEXT.md bake-off record. Do not retry. Status line was stale; corrected 2026-08-11)
 **Type:** research
 **Category:** enhancement
 **Blocked by:** —

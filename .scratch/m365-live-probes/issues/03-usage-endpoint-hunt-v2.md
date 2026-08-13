@@ -1,6 +1,6 @@
 # 03 — Usage-endpoint hunt v2 (full browser headers)
 
-**Status:** ready-for-agent
+**Status:** resolved (2026-08-11 — 500s identical to v1; browser-header gating falsified; docs/hypotheses.md §7 row + §12. Ticket status line was stale; corrected 2026-08-11)
 **Category:** enhancement
 **Type:** research
 **Blocked by:** —

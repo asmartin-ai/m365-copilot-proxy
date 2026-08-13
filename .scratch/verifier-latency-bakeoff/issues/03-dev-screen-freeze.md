@@ -1,6 +1,6 @@
 # 03 — Dev-corpus screen, freeze ONE candidate
 
-**Status:** ready-for-agent
+**Status:** resolved (CLOSED-REJECTED — five candidates unsafe FP on ambiguous-002; Ministral-3-3B failed selective accuracy; no candidate frozen, ticket 04 ineligible; NEXT.md. Status line was stale; corrected 2026-08-11)
 **Category:** enhancement
 **Blocked by:** 01, 02
 
