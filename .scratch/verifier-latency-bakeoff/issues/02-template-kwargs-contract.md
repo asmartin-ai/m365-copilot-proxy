@@ -44,3 +44,15 @@ completion request construction.
   request body; invalid JSON / non-object throws at construction; unset leaves
   the request byte-identical). 4 new unit tests (forwarded / omitted / invalid
   JSON throws / non-object throws). Suite 239 pass / 3 skip, tsc clean.
+
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).
