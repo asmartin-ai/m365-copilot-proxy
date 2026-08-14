@@ -30,3 +30,7 @@ Golden table (fake runTurn return → required ToolPathResult):
 - [x] Suite runs in < 1s, no network.
 
 **Status:** done
+
+## Comments
+
+- **2026-08-14 code review (post-merge, `reviewer` sub-agents on `git diff 050c010...HEAD`):** accepted gap — the contract suite has **zero `M365_STEERING` coverage**. The old `tool-path.test.ts` had a 4-test steering block (`unsteered→text`, `no fingerprint→text`, `steered→tools`, `legacy-unset→tools`); it was deleted wholesale with the old file and not re-implemented. The steering gate code is kept and still wired (`handler.ts` `steeringFingerprint`), just unguarded. Also silently dropped: `M365_ALLOW_MULTI_TOOL=1` batch preservation and mixed reply+real-tool cases. Deliberate no-fix: rebuilding deleted coverage re-introduces behavior the pivot spec classified out-of-scope; tracked here for a future coverage pass. The golden-table `malformed fence` row is covered only via the unknown-tool branch (well-formed fence + `tools: []`), not genuine malformed syntax — rename or add a malformed fixture when the suite is next touched. (Standards/Spec review reports: `agent://StandardsReview`, `agent://SpecReview`.)
