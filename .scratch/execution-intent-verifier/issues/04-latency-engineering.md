@@ -77,3 +77,14 @@ robust; per-case variance is large (e.g. execution_intent-011 42.2 s vs 62.5 s).
 Raw results: `experiments/tool-decision/execution-intent/results/latency-10a.baseline.{json,md}`,
 `latency-10a.cache-reuse-256.{json,md}`; heartbeat/status log:
 `%TEMP%\latency-10a-status.jsonl`.
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).

@@ -17,3 +17,14 @@ The AGENTS.md decision stands unless a human reverses it. Do NOT start this tick
 **Reverse the hold:** a license is available or price math changes → delete
 this sentence, set `Status: ready-for-agent`, and re-plan H8.4/H8.5 as a
 real ticket.
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).

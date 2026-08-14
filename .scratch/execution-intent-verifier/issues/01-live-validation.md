@@ -342,3 +342,14 @@ evidence (offline 10A) stands unchanged.
 
 - All green → mark 01 `resolved`; 02/03/04 unblock (02 flip default, 03
   held-out, 04 latency) become the active frontier.
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).

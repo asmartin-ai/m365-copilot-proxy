@@ -78,3 +78,15 @@ gate even when the permission mode does not request an interactive prompt.
 - Resolved 2026-08-09: `bun run test` passed (254 passed, 3 live-gated skipped).
   Adapter-focused coverage passed: 6 tests for canonical signing, deny paths,
   Codex input, and pi/OMP hook behavior. No M365 request was made.
+
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).

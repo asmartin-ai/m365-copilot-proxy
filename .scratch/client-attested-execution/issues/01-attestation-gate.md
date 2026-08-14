@@ -106,3 +106,15 @@ confirm a non-opt-in request still takes the injected 8H verifier path.
     error (404 included) under Bun (hook callers returned undefined; see
     `packages/proxy/plugins/error-hook.ts`). Without that fix the smoke's
     first request killed the process. Fix commit `f24d69a`.
+
+
+---
+
+## Reclassification (2026-08-13 simplify-tool-path)
+
+**Status:** wontfix
+**Reason:** Superseded by architecture pivot: the proxy translates observable
+M365 output; execution intent/policy belongs to the consuming harness. The
+`intent-verifier.ts` / `attestation.ts` modules are preserved as research
+artifacts but are no longer on the runtime path (see
+`.scratch/simplify-tool-path/spec.md`).
