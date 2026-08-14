@@ -28,3 +28,12 @@ review the telemetry log:
 | # | Ticket | Blocked by | M365 traffic |
 |---|--------|------------|--------------|
 | 01 | Passive throttle telemetry | — | 0 (passive) |
+
+## Related research (2026-08-14)
+
+Local-model candidate for the fallback lane: Nemotron 3.5 Lightning and the
+REAP-20B expert-pruned variant (11.5 GB IQ4_NL, 3B active, native tool
+calling, 1M context). See
+`docs/research/notes/nemotron-3.5-lightning-variants.md`. If this effort
+opens the fallback-lane build, run the REAP-20B against the
+Qwen3-Coder-30B-A3B baseline in the two-stage bake-off.

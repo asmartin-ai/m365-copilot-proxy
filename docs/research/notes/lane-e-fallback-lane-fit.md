@@ -1,6 +1,10 @@
 # Lane E — Local fallback lane fit (keeping the agent loop alive when M365 throttles or Disengages)
 > Snapshot as of 2026-08-09.
 
+> **Hardware correction (2026-08-14).** The laptop is a Dell Pro Max 16
+> with an RTX PRO Blackwell 8 GB (RTX PRO 1000 or 2000, sm_120), not an
+> RTX 5060. "RTX 5060 Laptop" here means this laptop GPU.
+
 
 - **Research date:** 2026-08-09 (all "current" claims as of this date)
 - **Question:** when M365 Copilot throttles (thread-rate degradation backoff) or Disengages, can the coding-agent loop keep running on a LOCAL model instead of idling — and what prior art, models, and operational shape fit this project?
