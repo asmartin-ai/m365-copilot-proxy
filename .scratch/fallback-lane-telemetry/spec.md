@@ -29,11 +29,21 @@ review the telemetry log:
 |---|--------|------------|--------------|
 | 01 | Passive throttle telemetry | — | 0 (passive) |
 
-## Related research (2026-08-14)
+## Related research (2026-08-14, updated 2026-08-21)
 
-Local-model candidate for the fallback lane: Nemotron 3.5 Lightning and the
-REAP-20B expert-pruned variant (11.5 GB IQ4_NL, 3B active, native tool
-calling, 1M context). See
-`docs/research/notes/nemotron-3.5-lightning-variants.md`. If this effort
-opens the fallback-lane build, run the REAP-20B against the
-Qwen3-Coder-30B-A3B baseline in the two-stage bake-off.
+Local-model candidates for the fallback lane. Original candidate:
+Nemotron REAP-20B (11.5 GB IQ4_NL, 3B active, native tool calling,
+1M context) — `docs/research/notes/nemotron-3.5-lightning-variants.md`.
+
+**2026-08-21 landscape update:** two stronger candidates shipped since —
+Qwen3.8-27B (dense, quality ceiling for local coding agents) and Meta
+Muse Glimmer 30B (Apache 2.0, agent-native, DFlash speculative decoding).
+See the note's §7 addendum for the revised four-candidate bake-off table.
+The REAP-20B download is ON HOLD until this effort actually opens the
+bake-off; if it opens, screen all four per §7.
+
+**Telemetry status (2026-08-21):** no
+`~/.config/opencode-m365/throttle-telemetry.ndjson` on the PC — zero
+events collected; the proxy has not run on this machine since ticket 01
+landed. Decision gate needs real proxy use (PC or laptop) to accumulate
+data before the ≥1 week / ≥3 episodes review can run.
